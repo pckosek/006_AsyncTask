@@ -1,7 +1,7 @@
 package com.example.pckosek.a006_asynctask;
 
 /* ------------------------*/
-/*    FILE VERSION 2.0     */
+/*    FILE VERSION 3.0     */
 /* ------------------------*/
 
 import android.content.res.AssetManager;
@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
@@ -21,7 +22,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private TextView mtextView;
     private Button mButton_01;
+    private Button mButton_02;
     private ViewGroup mtransitionsContainer;
+
+    private ProgressBar mprogressBar;
 
     private int mSomeInt = 0;
 
@@ -32,9 +36,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mtextView = (TextView) findViewById(R.id.tv_01);
         mButton_01 = (Button) findViewById(R.id.button1);
+        mButton_02 = (Button) findViewById(R.id.button2);
+
+        mprogressBar = (ProgressBar) findViewById(R.id.circular_progress_bar);
+
         mtransitionsContainer = (ViewGroup) findViewById(R.id.transitions_container);
 
         mButton_01.setOnClickListener(this);
+        mButton_02.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // THIS IS THE SAME OPERATION THAT IS IN OUR ASYNC TASK!!!
+
+                for (int j=0; j<50e7; j++) {
+                    mSomeInt += j;
+                }
+            }
+        });
 
     }
 
@@ -68,13 +87,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private class MyTask extends AsyncTask<Integer, Void, Integer> {
+    private class MyTask extends AsyncTask<Integer, Integer, Integer> {
         // THIS CLASS IS CALLED WITH an Integer input
         //      <Integer,...,...>
         // which means it is called by saying myTask.execute(0);
         //
-        //  it also does nothing in onProgressUpdate
-        //      <...,Void,...>
+        // onProgressUpdate is now passed and Integer from doInBackground
+        //      <...,Integer,...>
         //
         //  BUT - doInBackground still returns an Integer - WHICH is passed to onPostExecute
         //      <...,...,Integer>
@@ -84,7 +103,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         protected Integer doInBackground(Integer... params) {
             // Params is a list
             int i = params[0];
-            for (int j=0; j<100; j++) {
+            int progress = 0;
+
+            // WE'VE UPDATED THIS OPERATION TO HIGHLIGHT
+            for (int j=0; j<50e7; j++) {
+                if (0==j%1e7) {
+                    publishProgress(progress++);
+                }
                 i += j;
             }
             return i;
@@ -92,10 +117,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         @Override
+        protected void onProgressUpdate(Integer... progress) {
+            super.onProgressUpdate(progress);
+            mprogressBar.setProgress(progress[0]);
+        }
+
+        @Override
         protected void onPostExecute(Integer i) {
             super.onPostExecute(i);
             mSomeInt = i;
             mtextView.setText(i+"");
+            mprogressBar.setProgress(0);
         }
     }
 }

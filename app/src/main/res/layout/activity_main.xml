@@ -27,13 +27,46 @@
             android:text="@string/button_string"/>
 
 
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/progress_container"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tv_01"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:textAlignment="center" />
+
+            <ProgressBar
+                android:id="@+id/circular_progress_bar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:indeterminate="false"
+                android:max="49"
+                android:progress="0"
+                android:progressDrawable="@drawable/circular_progressbar" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="@dimen/button_height"
+            android:layout_alignParentLeft="true"
+            android:text="@string/kill_switch"/>
+
+
         <TextView
-            android:id="@+id/tv_01"
+            android:id="@+id/tv_02"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
+            android:text="-----"
             android:textAlignment="center" />
 
     </LinearLayout>
