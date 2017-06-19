@@ -1,7 +1,7 @@
 package com.example.pckosek.a006_asynctask;
 
 /* ------------------------*/
-/*    FILE VERSION 1.0     */
+/*    FILE VERSION 2.0     */
 /* ------------------------*/
 
 import android.content.res.AssetManager;
@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mButton_01;
     private ViewGroup mtransitionsContainer;
 
+    private int mSomeInt = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         MyTask myTask = new MyTask();
-        myTask.execute();
+        myTask.execute(mSomeInt);
     }
 
     // A Generic function to read a stream from the assets folder
@@ -66,23 +68,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private class MyTask extends AsyncTask<Void, Void, Integer> {
-        // THIS CLASS IS CALLED WITH NO INPUT PARAMETERS
-        //      <Void,...,...>
-        // which means it is called by saying myTask.execute();
+    private class MyTask extends AsyncTask<Integer, Void, Integer> {
+        // THIS CLASS IS CALLED WITH an Integer input
+        //      <Integer,...,...>
+        // which means it is called by saying myTask.execute(0);
         //
         //  it also does nothing in onProgressUpdate
         //      <...,Void,...>
         //
-        //  BUT - doInBackground returns an Integer - WHICH is passed to onPostExecute
+        //  BUT - doInBackground still returns an Integer - WHICH is passed to onPostExecute
         //      <...,...,Integer>
 
 
         @Override
-        protected Integer doInBackground(Void... params) {
-            int i = 0;
+        protected Integer doInBackground(Integer... params) {
+            // Params is a list
+            int i = params[0];
             for (int j=0; j<100; j++) {
-                i = j;
+                i += j;
             }
             return i;
 
@@ -91,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected void onPostExecute(Integer i) {
             super.onPostExecute(i);
+            mSomeInt = i;
             mtextView.setText(i+"");
         }
     }
