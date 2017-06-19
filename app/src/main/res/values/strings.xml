@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">006_AsyncTask</string>
+    <string name="button_string">Press Me!</string>
+</resources>
