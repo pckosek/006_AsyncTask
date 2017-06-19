@@ -1,7 +1,7 @@
 package com.example.pckosek.a006_asynctask;
 
 /* ------------------------*/
-/*    FILE VERSION 3.0     */
+/*    FILE VERSION 4.0     */
 /* ------------------------*/
 
 import android.content.res.AssetManager;
@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ProgressBar mprogressBar;
 
     private int mSomeInt = 0;
+    private boolean mScrollVisible;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,24 +37,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mtextView = (TextView) findViewById(R.id.tv_01);
         mButton_01 = (Button) findViewById(R.id.button1);
-        mButton_02 = (Button) findViewById(R.id.button2);
 
         mprogressBar = (ProgressBar) findViewById(R.id.circular_progress_bar);
 
         mtransitionsContainer = (ViewGroup) findViewById(R.id.transitions_container);
 
         mButton_01.setOnClickListener(this);
-        mButton_02.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                // THIS IS THE SAME OPERATION THAT IS IN OUR ASYNC TASK!!!
-
-                for (int j=0; j<50e7; j++) {
-                    mSomeInt += j;
-                }
-            }
-        });
 
     }
 
@@ -98,6 +87,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //  BUT - doInBackground still returns an Integer - WHICH is passed to onPostExecute
         //      <...,...,Integer>
 
+        // We're also going to snazz this up with some animations in onPre and onPost execute!
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mtextView.animate()
+                    .alpha(0f)
+                    .setDuration(200);
+            mprogressBar.animate()
+                    .alpha(1f)
+                    .setDuration(200);
+        }
 
         @Override
         protected Integer doInBackground(Integer... params) {
@@ -105,9 +106,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             int i = params[0];
             int progress = 0;
 
-            // WE'VE UPDATED THIS OPERATION TO HIGHLIGHT
-            for (int j=0; j<50e7; j++) {
-                if (0==j%1e7) {
+            // I sped this up a little
+            for (int j=0; j<50e6; j++) {
+                if (0==j%.5e6) {
                     publishProgress(progress++);
                 }
                 i += j;
@@ -127,7 +128,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.onPostExecute(i);
             mSomeInt = i;
             mtextView.setText(i+"");
-            mprogressBar.setProgress(0);
+
+            mtextView.animate()
+                    .alpha(1f)
+                    .setDuration(200);
+            mprogressBar.animate()
+                    .alpha(0f)
+                    .setDuration(200);
+
         }
     }
 }
